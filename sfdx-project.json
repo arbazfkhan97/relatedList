@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "RelatedList",
+  "name": "relatedList",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "59.0"

@@ -28,6 +28,7 @@ export default class DynamicDataTable extends NavigationMixin(LightningElement) 
     @track draftValues = [];
     @api parentfieldName;
     fieldSetOptions;
+    isLoading;
     data;
     selectedRows=[];
 
@@ -38,6 +39,8 @@ export default class DynamicDataTable extends NavigationMixin(LightningElement) 
             sortable: this.sortable,
              
         };
+        this.isLoading=true;
+        console.log('connected callback ran');
     }
 
     @wire(getFieldset, { objectName: '$objectName', fieldSetName: '$fieldSetName' })
@@ -76,6 +79,7 @@ wiredRecords(value) {
     const { error, data } = value;
     if (data) {
         this.records = data;
+        this.isLoading=false;
         console.log('2nd wireservice executed: ' + data);
         //this.columns=fieldSetFields.map(obj=>{if(obj==='Id'){ return obj;} else {return {...obj,editable:this.editable};}});
         //this.columns=getfieldSetFields;
@@ -95,6 +99,7 @@ handleRowSelection(event) {
 
 async deleteSelectedRows() {
     if(this.selectedRows.length>0){
+        this.isLoading=true;
         let recordIds=[];
         this.selectedRows.forEach(selectedRow=>{recordIds.push(selectedRow.Id)});
     console.log(recordIds);
@@ -108,7 +113,8 @@ async deleteSelectedRows() {
             variant: 'success'
         })
     );
-    }).catch(error=>{
+    }
+    ).catch(error=>{
         let msg=error;
         this.dispatchEvent(
             new ShowToastEvent({
@@ -118,6 +124,7 @@ async deleteSelectedRows() {
             })
         );
     })
+    this.selectedRows=[];
     await this.refreshHandler();
     }
     else{
@@ -131,13 +138,13 @@ async deleteSelectedRows() {
    
 }
 
-// handleNew(){
+// handleNew(event){
+//     //const actionName=event.detail.action.name;
 //     this[NavigationMixin.Navigate]({
 //         type: 'standard__recordPage',
 //         attributes: {
-//             recordId:'',
 //             objectApiName: '$objectName',
-//             actionName:'new'
+//             action:'new'
 //         }
 //     });
 
@@ -201,6 +208,7 @@ sortData(fieldName, sortDirection) {
 
 
 async handleSave(event) {
+    this.isLoading=false;
     const updatedFields = event.detail.draftValues;
     const recordInputs = updatedFields.map(draft => {
         const fields = Object.assign({}, draft);
@@ -233,6 +241,7 @@ async handleSave(event) {
 
 async deleteTheRecord(recordId) {
     try {
+        this.isLoading=true;
         await deleteRecord(recordId);
         this.dispatchEvent(
             new ShowToastEvent({
@@ -252,8 +261,17 @@ async deleteTheRecord(recordId) {
         );
     }
 }
+
+async handleRefresh(){
+    this.isLoading=true;
+    await Promise.resolve();
+    await this.refreshHandler();
+}
+
 refreshHandler(){
+    this.isLoading=false;
     return refreshApex(this.data);
 }
+
 
 }
