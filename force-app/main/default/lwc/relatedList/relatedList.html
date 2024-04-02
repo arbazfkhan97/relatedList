@@ -1,7 +1,36 @@
+<!-- sldsValidatorIgnore -->
 <template>
-    <lightning-datatable
+    <lightning-card icon-name={icon} variant="base">
+      <div slot="title">
+          Team Members
+      </div>
+      <div slot="actions">
+        <lightning-button-group>
+          <lightning-button label="New" onclick={handleNew}></lightning-button>
+          <lightning-button label="Delete" onclick={deleteSelectedRows}></lightning-button>          
+        </lightning-button-group>
+    
+      </div>
+      <div slot="footer">
+    
+      </div>
+      <div>
+        <lightning-datatable
         data={records}
         columns={columns}
+        onsave={handleSave}
+        draft-values={draftValues}
+        onsort={handleSort}
+        sorted-by={sortedBy}
+        sorted-direction={sortedDirection}
+        onrowaction={handleRowAction}
+        show-row-number-column
+        onrowselection={handleRowSelection}
         key-field="Id">
     </lightning-datatable>
+        <!-- Card Body  -->
+        
+      </div>
+    </lightning-card>
+   
 </template>

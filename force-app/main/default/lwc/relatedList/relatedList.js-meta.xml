@@ -7,8 +7,12 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
-            <property name="objectName" type="String" label="Object Name" description="The API name of the object"/>
-            <property name="fieldSetName" type="String" label="Field Set Name" description="The API name of the field set"/>
+            <property name="objectName" type="String" label="Object Name" description="The API name of the object" required="true"/>
+            <property name="fieldSetName" type="String" label="Field Set Name" description="The API name of the field set" required="true"/>
+            <property name="parentfieldName" type="String" label="Parent Field Name" description="The API name of the Parent field" required="true"/>
+            <property name="editable" type="Boolean" default="false" label="Allow Inline Editing" description="Set to True to enable Inline Editing"/>
+            <property name="icon" type="String" description="Input the desired icon"/>
+            <property name="sortable" label="Enable Sorting" default="false" type="Boolean" description="Enables sorting of data in the table"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
