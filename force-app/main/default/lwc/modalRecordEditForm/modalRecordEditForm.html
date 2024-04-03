@@ -1,0 +1,15 @@
+<template>
+    <lightning-modal-header label={object.label}></lightning-modal-header>
+    <lightning-modal-body>
+      <div if:true={errors} class="slds-notify slds-notify_alert slds-alert_error">
+        {errors}
+      </div>
+      <lightning-record-form
+        object-api-name={object.name}
+        layout-type="full"
+        onsuccess={closePopupSuccess}
+        oncancel={closePopup}
+        >
+      </lightning-record-form>
+    </lightning-modal-body>
+  </template>

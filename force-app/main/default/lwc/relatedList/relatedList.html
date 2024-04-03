@@ -1,41 +1,43 @@
 <template>
-    <lightning-card icon-name={icon} variant="base">
-      <div slot="title">
-          Team Members
-      </div>
-      <div slot="actions">
-        <lightning-button-group>
-            <lightning-button-icon icon-name="utility:refresh" variant="container" alternative-text="Refresh" title="Refresh" onclick={handleRefresh}></lightning-button-icon>
-            <lightning-button-icon icon-name="utility:adduser"   variant="container" alternative-text="New" title="New" onclick={handleNew}></lightning-button-icon>
-            <lightning-button-icon icon-name="utility:delete"    variant="container" alternative-text="Delete" title="Delete" onclick={deleteSelectedRows}></lightning-button-icon>
-          <!-- <lightning-button label="New" onclick={handleNew}></lightning-button>
-          <lightning-button label="Delete" onclick={deleteSelectedRows}></lightning-button>           -->
-        </lightning-button-group>
-    
-      </div>
-      <div class="spinner-container" lwc:if={isLoading}>
-        <lightning-spinner variant="brand" alternative-text="Loading" size="medium"></lightning-spinner>
-      </div>
-      <div lwc:else> 
-        <lightning-datatable
-        data={records}
-        columns={columns}
-        onsave={handleSave}
-        draft-values={draftValues}
-        onsort={handleSort}
-        sorted-by={sortedBy}
-        sorted-direction={sortedDirection}
-        onrowaction={handleRowAction}
-        show-row-number-column
-        onrowselection={handleRowSelection}
-        key-field="Id">
-    </lightning-datatable>
-        <!-- Card Body  -->
-        
-      </div>
-      <div slot="footer">
-    
-      </div>
-    </lightning-card>
-   
+  <lightning-card icon-name={icon} variant="base">
+    <div slot="title">
+        Team Members
+    </div>
+    <div slot="actions">
+      <lightning-button-group>
+          <lightning-button-icon icon-name="utility:refresh" variant="container" alternative-text="Refresh" title="Refresh" onclick={handleRefresh}></lightning-button-icon>
+          <lightning-button-icon icon-name="utility:adduser"   variant="container" alternative-text="New" title="New" onclick={handleNew}></lightning-button-icon>
+          <lightning-button-icon icon-name="utility:delete"    variant="container" alternative-text="Delete" title="Delete" onclick={deleteSelectedRows}></lightning-button-icon>
+        <!-- <lightning-button label="New" onclick={handleNew}></lightning-button>
+        <lightning-button label="Delete" onclick={deleteSelectedRows}></lightning-button>           -->
+      </lightning-button-group>
+  
+    </div>
+    <div class="spinner-container" lwc:if={isLoading}>
+      <lightning-spinner variant="brand" alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+    <div lwc:else> 
+      <lightning-datatable
+      data={records}
+      columns={columns}
+      onsave={handleSave}
+      draft-values={draftValues}
+      onsort={handleSort}
+      sorted-by={sortedBy}
+      sorted-direction={sortedDirection}
+      onrowaction={handleRowAction}
+      show-row-number-column
+      onrowselection={handleRowSelection}
+      key-field="Id">
+  </lightning-datatable>
+      <!-- Card Body  -->
+      
+      
+    </div>
+    <div slot="footer">
+  
+    </div>
+  </lightning-card>
+ 
 </template>
+
