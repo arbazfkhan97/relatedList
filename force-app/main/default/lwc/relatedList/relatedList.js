@@ -27,6 +27,7 @@ export default class DynamicDataTable extends NavigationMixin(LightningElement) 
     @track columns = [];
     @track draftValues = [];
     @api parentfieldName;
+    @api Title;
     fieldSetOptions;
     data;
     selectedRows=[];
