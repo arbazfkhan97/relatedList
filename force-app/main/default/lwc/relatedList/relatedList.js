@@ -7,6 +7,8 @@ import { refreshApex } from '@salesforce/apex';
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { NavigationMixin } from 'lightning/navigation';
 import deleteRecords from '@salesforce/apex/DynamicObjectFieldSetController.deleteRecords';
+import ModalRecordEditForm from "c/modalRecordEditForm";
+import { getObjectInfo } from "lightning/uiObjectInfoApi";
 
 const actions = [
     { label:'View', name:'view'},
@@ -29,17 +31,23 @@ export default class DynamicDataTable extends NavigationMixin(LightningElement) 
     @api parentfieldName;
     @api Title;
     fieldSetOptions;
+    isLoading;
     data;
     selectedRows=[];
 
     connectedCallback(){
         this.fieldSetOptions = {
             
-            wrapText: true,
+            clipText: true,
             sortable: this.sortable,
              
         };
+        this.isLoading=true;
+        console.log('connected callback call');
     }
+
+    @wire(getObjectInfo, { objectApiName: '$objectName' })
+    objectInfo;
 
     @wire(getFieldset, { objectName: '$objectName', fieldSetName: '$fieldSetName' })
     wiredFieldset({ error, data }) {
@@ -77,7 +85,8 @@ wiredRecords(value) {
     const { error, data } = value;
     if (data) {
         this.records = data;
-        console.log('2nd wireservice executed: ' + data);
+        this.isLoading=false;
+        console.log(data);
         //this.columns=fieldSetFields.map(obj=>{if(obj==='Id'){ return obj;} else {return {...obj,editable:this.editable};}});
         //this.columns=getfieldSetFields;
         this.error = undefined;
@@ -96,6 +105,7 @@ handleRowSelection(event) {
 
 async deleteSelectedRows() {
     if(this.selectedRows.length>0){
+        this.isLoading=true;
         let recordIds=[];
         this.selectedRows.forEach(selectedRow=>{recordIds.push(selectedRow.Id)});
     console.log(recordIds);
@@ -109,7 +119,8 @@ async deleteSelectedRows() {
             variant: 'success'
         })
     );
-    }).catch(error=>{
+    }
+    ).catch(error=>{
         let msg=error;
         this.dispatchEvent(
             new ShowToastEvent({
@@ -119,7 +130,8 @@ async deleteSelectedRows() {
             })
         );
     })
-    await this.refreshHandler();
+    this.selectedRows=[];
+    this.isLoading=await this.refreshHandler();
     }
     else{
         this.dispatchEvent(new ShowToastEvent({
@@ -132,17 +144,31 @@ async deleteSelectedRows() {
    
 }
 
-// handleNew(){
-//     this[NavigationMixin.Navigate]({
-//         type: 'standard__recordPage',
-//         attributes: {
-//             recordId:'',
-//             objectApiName: '$objectName',
-//             actionName:'new'
-//         }
-//     });
+async handleNew(){
+    const obj = {
+        label:"New "+this.objectInfo.data.label,
+        name:this.objectName
+    }
+    let recordId;
+    await ModalRecordEditForm.open({
+        size: "small",
+        object:obj
+      }).then((result) => {
+        recordId=result;
+    });
+if(recordId){
+    console.log('recordid is: '+recordId);
+    await this.dispatchEvent(new ShowToastEvent({
+        title: 'Success',
+        message: obj.label+' created',
+        variant: 'success'
+    })
+    );
+        this.isLoading=await this.refreshHandler();
 
-// }
+}
+    
+      }
 
 handleRowAction(event) {
     const actionName = event.detail.action.name;
@@ -202,6 +228,7 @@ sortData(fieldName, sortDirection) {
 
 
 async handleSave(event) {
+    this.isLoading=true;
     const updatedFields = event.detail.draftValues;
     const recordInputs = updatedFields.map(draft => {
         const fields = Object.assign({}, draft);
@@ -218,7 +245,7 @@ async handleSave(event) {
             })
         );
         this.draftValues = [];
-        this.refreshHandler();
+        this.isLoading=this.refreshHandler();
         
     }).catch(error => {
         this.dispatchEvent(
@@ -234,6 +261,7 @@ async handleSave(event) {
 
 async deleteTheRecord(recordId) {
     try {
+        this.isLoading=true;
         await deleteRecord(recordId);
         this.dispatchEvent(
             new ShowToastEvent({
@@ -242,7 +270,7 @@ async deleteTheRecord(recordId) {
                 variant: 'success'
             })
         );
-        await this.refreshHandler();
+        this.isLoading=await this.refreshHandler();
     } catch (error) {
         this.dispatchEvent(
             new ShowToastEvent({
@@ -253,8 +281,18 @@ async deleteTheRecord(recordId) {
         );
     }
 }
-refreshHandler(){
-    return refreshApex(this.data);
+
+async handleRefresh(){
+    this.isLoading=true;
+    await Promise.resolve();
+    this.isLoading=await this.refreshHandler();
+
 }
+
+refreshHandler(){
+    refreshApex(this.data);
+    return false;
+}
+
 
 }

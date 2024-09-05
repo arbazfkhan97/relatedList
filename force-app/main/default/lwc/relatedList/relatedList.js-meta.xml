@@ -12,6 +12,7 @@
             <property name="parentfieldName" type="String" label="Parent Field Name" description="The API name of the Parent field" required="true"/>
             <property name="editable" type="Boolean" default="false" label="Allow Inline Editing" description="Set to True to enable Inline Editing"/>
             <property name="icon" type="String" description="Input the desired icon"/>
+            <property name="Title" type="String" description="Input the desired Title"/>
             <property name="sortable" label="Enable Sorting" default="false" type="Boolean" description="Enables sorting of data in the table"/>
             <property name="Title" type="String" description="Input the desired Title for the Related List"/>
         </targetConfig>
